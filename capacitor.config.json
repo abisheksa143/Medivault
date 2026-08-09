@@ -1,0 +1,16 @@
+{
+  "appId": "com.medivault.healthwallet",
+  "appName": "MediVault",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#0b0f19",
+      "showSpinner": false
+    }
+  }
+}

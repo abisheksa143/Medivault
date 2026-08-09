@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">MediVault</string>
+    <string name="title_activity_main">MediVault</string>
+    <string name="package_name">com.medivault.healthwallet</string>
+    <string name="custom_url_scheme">com.medivault.healthwallet</string>
+</resources>
