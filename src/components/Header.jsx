@@ -1,7 +1,7 @@
 import React from 'react';
 import { 
   ShieldCheck, Search, Activity, RefreshCw, LineChart, 
-  Share2, Lock, Sun, Moon, PlusCircle, HardDriveDownload, Bell, Users, Globe, Eye, Stethoscope, Edit3 
+  Share2, Lock, Sun, Moon, PlusCircle, HardDriveDownload, Bell, Users, Globe, Eye, Stethoscope, Edit3, Contrast, Type 
 } from 'lucide-react';
 import { TRANSLATIONS, LANGUAGES_LIST } from '../services/i18n';
 
@@ -16,6 +16,10 @@ export default function Header({
   onChangeLang,
   elderMode,
   toggleElderMode,
+  highContrast,
+  toggleHighContrast,
+  textSize,
+  onChangeTextSize,
   onOpenEmergency,
   onOpenSync,
   onOpenVitals,
@@ -49,10 +53,11 @@ export default function Header({
 
   return (
     <header style={styles.header} className="glass-panel app-header">
+      {/* Top Left: Logo & Profile Selector */}
       <div style={styles.leftGroup} className="header-left">
         <div style={styles.logoGroup}>
           <div style={styles.logoBadge}>
-            <ShieldCheck size={24} color="var(--accent-emerald)" />
+            <ShieldCheck size={22} color="var(--accent-emerald)" />
           </div>
           <div>
             <div style={styles.logoText}>
@@ -96,7 +101,7 @@ export default function Header({
         </div>
       </div>
 
-      {/* Search Bar */}
+      {/* Center Search Bar */}
       <div style={styles.centerSearch} className="header-search">
         <div style={styles.searchWrapper}>
           <Search size={15} color="var(--text-muted)" style={styles.searchIcon} />
@@ -115,38 +120,65 @@ export default function Header({
         </div>
       </div>
 
-      {/* Right Header Bar Actions */}
+      {/* Right Header Bar Actions (Mobile Responsive Wrap) */}
       <div style={styles.rightActions} className="header-actions">
         <button
           onClick={onOpenDiseaseCare}
           className="btn btn-secondary btn-sm"
           title="Disease-Specific Care Workspaces"
         >
-          <Stethoscope size={15} color="var(--accent-cyan)" />
+          <Stethoscope size={14} color="var(--accent-cyan)" />
           <span>{t.diseaseCare}</span>
         </button>
 
+        {/* Elder Mode Toggle */}
         <button
           onClick={toggleElderMode}
           className={elderMode ? "btn btn-cyan btn-sm" : "btn btn-secondary btn-sm"}
           title="Toggle Large Fonts & High Contrast for Elderly Users"
         >
-          <Eye size={15} />
+          <Eye size={14} />
           <span>{elderMode ? "Elder Mode ON" : t.elderMode}</span>
         </button>
 
+        {/* High-Contrast Mode Toggle */}
+        <button
+          onClick={toggleHighContrast}
+          className={highContrast ? "btn btn-cyan btn-sm" : "btn btn-secondary btn-sm"}
+          style={{ padding: '6px 8px' }}
+          title="Toggle High-Contrast Stark Mode"
+        >
+          <Contrast size={14} color={highContrast ? "#ffff00" : "var(--accent-amber)"} />
+          <span>{highContrast ? "Contrast ON" : "Contrast"}</span>
+        </button>
+
+        {/* Text Size Scaler */}
+        <div style={styles.textSizeWrapper} title="Text Size Scaler">
+          <Type size={13} color="var(--accent-cyan)" />
+          <select
+            value={textSize}
+            onChange={(e) => onChangeTextSize(e.target.value)}
+            style={styles.textSizeSelect}
+          >
+            <option value="normal" style={{ background: '#0f172a', color: '#f8fafc' }}>100%</option>
+            <option value="large" style={{ background: '#0f172a', color: '#f8fafc' }}>115%</option>
+            <option value="xlarge" style={{ background: '#0f172a', color: '#f8fafc' }}>130%</option>
+          </select>
+        </div>
+
+        {/* Notifications Button */}
         <button
           onClick={onOpenNotifications}
           className="btn btn-secondary btn-sm"
-          style={{ position: 'relative' }}
+          style={{ position: 'relative', padding: '6px 8px' }}
         >
-          <Bell size={15} color="var(--accent-amber)" />
+          <Bell size={14} color="var(--accent-amber)" />
           <span style={styles.notifBadge}>3</span>
         </button>
 
-        {/* Immediate Language Selector */}
+        {/* Core Languages Selector */}
         <div style={styles.langSelectWrapper}>
-          <Globe size={14} color="var(--accent-emerald)" />
+          <Globe size={13} color="var(--accent-emerald)" />
           <select
             value={currentLang}
             onChange={handleLanguageChange}
@@ -161,20 +193,22 @@ export default function Header({
           </select>
         </div>
 
+        {/* Theme Toggle */}
         <button
           onClick={toggleTheme}
           className="btn btn-secondary btn-sm"
-          style={{ padding: '8px' }}
+          style={{ padding: '6px 8px' }}
         >
-          {theme === 'dark' ? <Sun size={15} color="#fbbf24" /> : <Moon size={15} color="#6366f1" />}
+          {theme === 'dark' ? <Sun size={14} color="#fbbf24" /> : <Moon size={14} color="#6366f1" />}
         </button>
 
+        {/* App Lock Button */}
         <button
           onClick={onLock}
           className="btn btn-secondary btn-sm"
-          style={{ padding: '8px' }}
+          style={{ padding: '6px 8px' }}
         >
-          <Lock size={15} color="var(--accent-crimson)" />
+          <Lock size={14} color="var(--accent-crimson)" />
         </button>
       </div>
     </header>
@@ -183,7 +217,7 @@ export default function Header({
 
 const styles = {
   header: {
-    padding: '12px 20px',
+    padding: '12px 18px',
     borderRadius: '0 0 16px 16px',
     display: 'flex',
     alignItems: 'center',
@@ -192,23 +226,23 @@ const styles = {
     sticky: 'top',
     top: 0,
     zIndex: 100,
-    marginBottom: '20px',
+    marginBottom: '16px',
     background: 'var(--bg-card)',
     borderBottom: '1px solid var(--border-color)'
   },
   leftGroup: {
     display: 'flex',
     alignItems: 'center',
-    gap: '14px'
+    gap: '12px'
   },
   logoGroup: {
     display: 'flex',
     alignItems: 'center',
-    gap: '10px'
+    gap: '8px'
   },
   logoBadge: {
-    width: '38px',
-    height: '38px',
+    width: '36px',
+    height: '36px',
     borderRadius: '10px',
     background: 'rgba(16, 185, 129, 0.12)',
     border: '1px solid rgba(16, 185, 129, 0.3)',
@@ -217,7 +251,7 @@ const styles = {
     justifyContent: 'center'
   },
   logoText: {
-    fontSize: '1.2rem',
+    fontSize: '1.15rem',
     fontWeight: '800',
     letterSpacing: '-0.3px',
     color: 'var(--text-primary)'
@@ -226,13 +260,13 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: '6px',
-    marginTop: '2px'
+    marginTop: '1px'
   },
   profileSelectWrapper: {
     display: 'flex',
     alignItems: 'center',
-    gap: '6px',
-    padding: '4px 8px',
+    gap: '4px',
+    padding: '4px 6px',
     borderRadius: '8px',
     background: 'rgba(6, 182, 212, 0.08)',
     border: '1px solid rgba(6, 182, 212, 0.25)'
@@ -241,22 +275,23 @@ const styles = {
     background: 'none',
     border: 'none',
     color: 'var(--text-primary)',
-    fontSize: '0.8rem',
+    fontSize: '0.78rem',
     fontWeight: '700',
     outline: 'none',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    maxWidth: '120px'
   },
   editNameIconBtn: {
     background: 'none',
     border: 'none',
     cursor: 'pointer',
-    padding: '2px 4px',
+    padding: '2px 3px',
     display: 'flex',
     alignItems: 'center'
   },
   centerSearch: {
     flex: 1,
-    maxWidth: '240px'
+    maxWidth: '220px'
   },
   searchWrapper: {
     position: 'relative',
@@ -265,44 +300,62 @@ const styles = {
   },
   searchIcon: {
     position: 'absolute',
-    left: '12px',
+    left: '10px',
     pointerEvents: 'none'
   },
   searchInput: {
     width: '100%',
-    padding: '8px 32px 8px 34px',
+    padding: '7px 28px 7px 30px',
     borderRadius: '99px',
     background: 'rgba(255, 255, 255, 0.05)',
     border: '1px solid var(--border-color)',
     color: 'var(--text-primary)',
-    fontSize: '0.85rem',
+    fontSize: '0.82rem',
     outline: 'none',
     fontFamily: 'var(--font-sans)'
   },
   clearBtn: {
     position: 'absolute',
-    right: '10px',
+    right: '8px',
     background: 'none',
     border: 'none',
     color: 'var(--text-muted)',
-    fontSize: '1.1rem',
+    fontSize: '1rem',
     cursor: 'pointer'
   },
   rightActions: {
     display: 'flex',
     alignItems: 'center',
-    gap: '8px'
+    gap: '6px'
+  },
+  textSizeWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '2px',
+    padding: '4px 6px',
+    borderRadius: '8px',
+    background: 'rgba(255, 255, 255, 0.04)',
+    border: '1px solid var(--border-color)'
+  },
+  textSizeSelect: {
+    background: 'none',
+    border: 'none',
+    color: 'var(--text-primary)',
+    fontSize: '0.75rem',
+    fontWeight: '700',
+    outline: 'none',
+    cursor: 'pointer'
   },
   notifBadge: {
     position: 'absolute',
     top: '-4px',
     right: '-4px',
-    width: '16px',
-    height: '16px',
+    width: '15px',
+    height: '15px',
     borderRadius: '50%',
     background: 'var(--accent-amber)',
     color: '#000',
-    fontSize: '0.65rem',
+    fontSize: '0.62rem',
     fontWeight: '800',
     display: 'flex',
     alignItems: 'center',
@@ -312,7 +365,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: '4px',
-    padding: '4px 8px',
+    padding: '4px 6px',
     borderRadius: '8px',
     background: 'rgba(255, 255, 255, 0.04)',
     border: '1px solid var(--border-color)'
@@ -321,9 +374,10 @@ const styles = {
     background: 'none',
     border: 'none',
     color: 'var(--text-primary)',
-    fontSize: '0.8rem',
+    fontSize: '0.78rem',
     fontWeight: '700',
     outline: 'none',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    maxWidth: '90px'
   }
 };

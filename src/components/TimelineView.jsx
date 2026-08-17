@@ -3,7 +3,7 @@ import {
   FlaskConical, Pill, Image as ImageIcon, Syringe, FileText, 
   AlertTriangle, Calendar, Building2, User, ChevronRight, 
   Sparkles, Eye, Trash2, Filter, AlertCircle, ShieldAlert,
-  FolderHeart, Activity, UploadCloud, Share2
+  FolderHeart, Activity, UploadCloud, Share2, Siren, CheckCircle2 
 } from 'lucide-react';
 import { TRANSLATIONS } from '../services/i18n';
 
@@ -23,7 +23,23 @@ export default function TimelineView({
 }) {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [onlyWarnings, setOnlyWarnings] = useState(false);
+  const [activeFeedbackToast, setActiveFeedbackToast] = useState('');
   const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
+
+  const handleMyRecordsClick = () => {
+    setSelectedCategory('all');
+    setOnlyWarnings(false);
+
+    // Show visual confirmation toast
+    setActiveFeedbackToast(`Displaying All ${records.length} Medical Records`);
+    setTimeout(() => setActiveFeedbackToast(''), 2500);
+
+    // Smooth scroll down to medical records list
+    const el = document.getElementById('medical-records-feed');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   const filteredRecords = records.filter((rec) => {
     if (selectedCategory !== 'all' && rec.type !== selectedCategory) {
@@ -57,41 +73,58 @@ export default function TimelineView({
 
   return (
     <div style={{ ...styles.container, fontSize: elderMode ? '1.1rem' : '0.9rem' }}>
-      {/* 4 Big Primary Hero Dashboard Buttons */}
+      {/* Visual Feedback Toast Notification */}
+      {activeFeedbackToast && (
+        <div style={styles.toastBanner}>
+          <CheckCircle2 size={16} color="var(--accent-emerald)" />
+          <span>{activeFeedbackToast}</span>
+        </div>
+      )}
+
+      {/* 4 Primary Hero Dashboard Buttons with Equal Spacing & Distinct Emergency Color */}
       <div style={styles.heroGrid} className="hero-grid">
+        {/* 1. My Records */}
         <button
-          onClick={() => setSelectedCategory('all')}
-          style={styles.heroCardPrimary}
+          onClick={handleMyRecordsClick}
+          style={styles.heroCardEmerald}
           className="hero-card"
+          title="Click to view all medical records below"
         >
-          <FolderHeart size={elderMode ? 32 : 26} color="#ffffff" />
+          <FolderHeart size={elderMode ? 28 : 24} color="#ffffff" />
           <span style={styles.heroText}>{t.myRecords} ({records.length})</span>
         </button>
 
+        {/* 2. Emergency Card (Highlighted Red/Coral with Urgent Pulse Aura) */}
         <button
           onClick={onOpenEmergency}
-          style={styles.heroCardDanger}
-          className="hero-card"
+          style={styles.heroCardEmergency}
+          className="hero-card emergency-pulse-aura"
+          title="Paramedic Emergency Passcard"
         >
-          <Activity size={elderMode ? 32 : 26} color="#ffffff" />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Siren size={elderMode ? 28 : 24} color="#ffffff" />
+            <span style={styles.urgentBadge}>⚡ URGENT</span>
+          </div>
           <span style={styles.heroText}>{t.emergencyCard}</span>
         </button>
 
+        {/* 3. Upload & Scan */}
         <button
           onClick={onOpenSync}
           style={styles.heroCardCyan}
           className="hero-card"
         >
-          <UploadCloud size={elderMode ? 32 : 26} color="#ffffff" />
+          <UploadCloud size={elderMode ? 28 : 24} color="#ffffff" />
           <span style={styles.heroText}>{t.uploadScan}</span>
         </button>
 
+        {/* 4. Share Pass */}
         <button
           onClick={onOpenShare}
           style={styles.heroCardIndigo}
           className="hero-card"
         >
-          <Share2 size={elderMode ? 32 : 26} color="#ffffff" />
+          <Share2 size={elderMode ? 28 : 24} color="#ffffff" />
           <span style={styles.heroText}>{t.sharePass}</span>
         </button>
       </div>
@@ -133,8 +166,8 @@ export default function TimelineView({
         </div>
       </div>
 
-      {/* Category Pills */}
-      <div style={styles.filterToolbar}>
+      {/* Category Pills & Filter Toolbar */}
+      <div style={styles.filterToolbar} id="medical-records-feed">
         <div style={styles.categoryPills} className="category-scroll-container">
           <button
             style={selectedCategory === 'all' ? styles.pillActive : styles.pill}
@@ -283,15 +316,29 @@ const styles = {
     flexDirection: 'column',
     gap: '16px'
   },
+  toastBanner: {
+    padding: '10px 16px',
+    borderRadius: '12px',
+    background: 'rgba(16, 185, 129, 0.15)',
+    border: '1px solid rgba(16, 185, 129, 0.3)',
+    color: 'var(--accent-emerald)',
+    fontSize: '0.85rem',
+    fontWeight: '700',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    animation: 'modalSlide 0.2s ease'
+  },
   heroGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+    gridTemplateColumns: 'repeat(4, 1fr)',
     gap: '12px',
     marginBottom: '8px'
   },
-  heroCardPrimary: {
-    padding: '16px',
-    borderRadius: '14px',
+  heroCardEmerald: {
+    height: '78px',
+    padding: '14px 16px',
+    borderRadius: '16px',
     background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
     border: 'none',
     color: '#ffffff',
@@ -300,28 +347,30 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '8px',
+    gap: '6px',
     boxShadow: '0 4px 14px rgba(16, 185, 129, 0.3)',
     transition: 'all 0.2s ease'
   },
-  heroCardDanger: {
-    padding: '16px',
-    borderRadius: '14px',
+  heroCardEmergency: {
+    height: '78px',
+    padding: '14px 16px',
+    borderRadius: '16px',
     background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-    border: 'none',
+    border: '2px solid #f87171',
     color: '#ffffff',
     cursor: 'pointer',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '8px',
-    boxShadow: '0 4px 14px rgba(239, 68, 68, 0.3)',
+    gap: '4px',
+    boxShadow: '0 4px 20px rgba(239, 68, 68, 0.5)',
     transition: 'all 0.2s ease'
   },
   heroCardCyan: {
-    padding: '16px',
-    borderRadius: '14px',
+    height: '78px',
+    padding: '14px 16px',
+    borderRadius: '16px',
     background: 'linear-gradient(135deg, #06b6d4 0%, #0284c7 100%)',
     border: 'none',
     color: '#ffffff',
@@ -330,13 +379,14 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '8px',
+    gap: '6px',
     boxShadow: '0 4px 14px rgba(6, 182, 212, 0.3)',
     transition: 'all 0.2s ease'
   },
   heroCardIndigo: {
-    padding: '16px',
-    borderRadius: '14px',
+    height: '78px',
+    padding: '14px 16px',
+    borderRadius: '16px',
     background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
     border: 'none',
     color: '#ffffff',
@@ -345,14 +395,22 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '8px',
+    gap: '6px',
     boxShadow: '0 4px 14px rgba(99, 102, 241, 0.3)',
     transition: 'all 0.2s ease'
   },
   heroText: {
-    fontSize: '0.95rem',
+    fontSize: '0.92rem',
     fontWeight: '800',
     letterSpacing: '-0.2px'
+  },
+  urgentBadge: {
+    fontSize: '0.65rem',
+    fontWeight: '900',
+    background: '#ffffff',
+    color: '#dc2626',
+    padding: '2px 6px',
+    borderRadius: '99px'
   },
   patientBanner: {
     padding: '16px 20px',

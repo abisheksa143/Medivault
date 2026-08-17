@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Sparkles, AlertCircle, Watch, Heart, Activity, 
-  ChevronDown, ChevronUp, Eye, Mic, Camera, Bell 
+  ChevronDown, ChevronUp, Eye, Mic, Camera, Bell, Pill, FlaskConical, ImageIcon 
 } from 'lucide-react';
 import { TRANSLATIONS } from '../services/i18n';
 
@@ -24,21 +24,45 @@ export default function AiHealthSummaryCard({
 
   return (
     <div style={{ ...styles.container, fontSize: elderMode ? '1.15rem' : '0.92rem' }} className="glass-panel">
-      {/* Progressive Disclosure Simple 1-Sentence Summary */}
+      {/* Top Summary Header with Color-Coded Metrics Badges */}
       <div style={styles.progressiveHeader}>
-        <div style={styles.summaryTextGroup}>
-          <Sparkles size={20} color="var(--accent-emerald)" />
-          <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
-            You have {rxCount} medications, {labCount} lab tests, and {scanCount} scans this year.
-          </span>
+        <div style={styles.summaryLeftGroup}>
+          <div style={styles.aiBadgeIcon}>
+            <Sparkles size={20} color="var(--accent-emerald)" />
+          </div>
+          <div>
+            <div style={styles.metricsPillsRow}>
+              {/* Color-Coded Metric 1: Medications */}
+              <div style={styles.metricPillRx} title="Active Medications">
+                <Pill size={15} color="#06b6d4" />
+                <span>Medications: <strong>{rxCount}</strong></span>
+              </div>
+
+              {/* Color-Coded Metric 2: Lab Tests */}
+              <div style={styles.metricPillLab} title="Lab Reports">
+                <FlaskConical size={15} color="#10b981" />
+                <span>Lab Tests: <strong>{labCount}</strong></span>
+              </div>
+
+              {/* Color-Coded Metric 3: Scans & X-Rays */}
+              <div style={styles.metricPillScan} title="Imaging & Scans">
+                <ImageIcon size={15} color="#f43f5e" />
+                <span>Scans: <strong>{scanCount}</strong></span>
+              </div>
+            </div>
+
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
+              Your health history summary is up to date for 2026.
+            </p>
+          </div>
         </div>
 
         <button
           onClick={() => setExpanded(!expanded)}
           className="btn btn-secondary btn-sm"
-          style={{ gap: '4px' }}
+          style={{ gap: '6px' }}
         >
-          <span>{expanded ? "Hide Details" : "View Details"}</span>
+          <span>{expanded ? t.hideDetails : t.viewDetails}</span>
           {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
         </button>
       </div>
@@ -121,10 +145,63 @@ const styles = {
     flexWrap: 'wrap',
     gap: '12px'
   },
-  summaryTextGroup: {
+  summaryLeftGroup: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: '12px'
+  },
+  aiBadgeIcon: {
+    width: '38px',
+    height: '38px',
+    borderRadius: '12px',
+    background: 'rgba(16, 185, 129, 0.12)',
+    border: '1px solid rgba(16, 185, 129, 0.3)',
     display: 'flex',
     alignItems: 'center',
-    gap: '10px'
+    justifyContent: 'center',
+    marginTop: '2px'
+  },
+  metricsPillsRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    flexWrap: 'wrap'
+  },
+  metricPillRx: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '6px',
+    padding: '4px 10px',
+    borderRadius: '99px',
+    background: 'rgba(6, 182, 212, 0.12)',
+    border: '1px solid rgba(6, 182, 212, 0.3)',
+    color: 'var(--text-primary)',
+    fontSize: '0.82rem',
+    fontWeight: '600'
+  },
+  metricPillLab: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '6px',
+    padding: '4px 10px',
+    borderRadius: '99px',
+    background: 'rgba(16, 185, 129, 0.12)',
+    border: '1px solid rgba(16, 185, 129, 0.3)',
+    color: 'var(--text-primary)',
+    fontSize: '0.82rem',
+    fontWeight: '600'
+  },
+  metricPillScan: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '6px',
+    padding: '4px 10px',
+    borderRadius: '99px',
+    background: 'rgba(244, 63, 94, 0.12)',
+    border: '1px solid rgba(244, 63, 94, 0.3)',
+    color: 'var(--text-primary)',
+    fontSize: '0.82rem',
+    fontWeight: '600'
   },
   expandedContent: {
     marginTop: '14px',

@@ -15,8 +15,6 @@ import CameraScannerModal from './components/CameraScannerModal';
 import AiHealthSummaryCard from './components/AiHealthSummaryCard';
 import DiseaseCareCenterModal from './components/DiseaseCareCenterModal';
 import ManageFamilyModal from './components/ManageFamilyModal';
-import BottomMobileNav from './components/BottomMobileNav';
-import DoctorConsultationModal from './components/DoctorConsultationModal';
 import { StorageService } from './services/storageService';
 
 export default function App() {
@@ -35,6 +33,8 @@ export default function App() {
   // Language & Family Profile State
   const [currentLang, setCurrentLang] = useState('en');
   const [elderMode, setElderMode] = useState(false);
+  const [highContrast, setHighContrast] = useState(false);
+  const [textSize, setTextSize] = useState('normal'); // 'normal' | 'large' | 'xlarge'
 
   // Modals & Drawers State
   const [selectedRecord, setSelectedRecord] = useState(null);
@@ -49,7 +49,6 @@ export default function App() {
   const [showNewRecordModal, setShowNewRecordModal] = useState(false);
   const [showVoiceModal, setShowVoiceModal] = useState(false);
   const [showCameraModal, setShowCameraModal] = useState(false);
-  const [consultRecord, setConsultRecord] = useState(null);
 
   // Theme State
   const [theme, setTheme] = useState('dark');
@@ -82,6 +81,19 @@ export default function App() {
     setTheme(nextTheme);
     StorageService.setTheme(nextTheme);
     document.documentElement.setAttribute('data-theme', nextTheme);
+  };
+
+  const toggleHighContrast = () => {
+    const nextVal = !highContrast;
+    setHighContrast(nextVal);
+    document.documentElement.setAttribute('data-high-contrast', nextVal ? 'true' : 'false');
+  };
+
+  const handleChangeTextSize = (newSize) => {
+    setTextSize(newSize);
+    document.body.classList.remove('text-size-large', 'text-size-xlarge');
+    if (newSize === 'large') document.body.classList.add('text-size-large');
+    if (newSize === 'xlarge') document.body.classList.add('text-size-xlarge');
   };
 
   const handleSwitchProfile = (newProfile) => {
@@ -150,7 +162,7 @@ export default function App() {
           onChangeLang={handleChangeLang}
         />
       ) : (
-        <div style={styles.appWrapper} className="app-wrapper">
+        <div style={styles.appWrapper}>
           {/* Main Top Header */}
           <Header
             searchTerm={searchTerm}
@@ -163,6 +175,10 @@ export default function App() {
             onChangeLang={handleChangeLang}
             elderMode={elderMode}
             toggleElderMode={() => setElderMode(!elderMode)}
+            highContrast={highContrast}
+            toggleHighContrast={toggleHighContrast}
+            textSize={textSize}
+            onChangeTextSize={handleChangeTextSize}
             onOpenEmergency={() => setShowEmergencyModal(true)}
             onOpenSync={() => setShowSyncModal(true)}
             onOpenVitals={() => setShowVitalsModal(true)}
@@ -205,16 +221,6 @@ export default function App() {
               onOpenShare={() => setShowShareModal(true)}
             />
           </main>
-
-          {/* Mobile Bottom Navigation Bar (Visible on mobile screens < 768px) */}
-          <BottomMobileNav
-            currentLang={currentLang}
-            onOpenTimeline={() => setSearchTerm('')}
-            onOpenNewRecord={() => setShowNewRecordModal(true)}
-            onOpenVitals={() => setShowVitalsModal(true)}
-            onOpenEmergency={() => setShowEmergencyModal(true)}
-            onOpenDiseaseCare={() => setShowDiseaseCareModal(true)}
-          />
         </div>
       )}
 
@@ -222,18 +228,8 @@ export default function App() {
       {selectedRecord && (
         <RecordDetailModal
           record={selectedRecord}
-          currentLang={currentLang}
           onClose={() => setSelectedRecord(null)}
           onOpenDicoms={(rec) => setDicomRecord(rec)}
-          onOpenDoctorConsultation={(rec) => setConsultRecord(rec)}
-        />
-      )}
-
-      {consultRecord && (
-        <DoctorConsultationModal
-          record={consultRecord}
-          patientProfile={patientProfile}
-          onClose={() => setConsultRecord(null)}
         />
       )}
 
